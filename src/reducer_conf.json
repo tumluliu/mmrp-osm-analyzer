@@ -1,0 +1,19 @@
+{
+    "Track":                       "track_id",
+    "Segment":                     "segment_id",
+    "Length 2D":                   "length_2d",
+    "Length 3D":                   "length_3d",
+    "Moving time":                 "moving_time",
+    "Stopped time":                "stopped_time",
+    "Max speed":                   "max_speed",
+    "Total uphill":                "uphill",
+    "Total downhill":              "downhill",
+    "Started":                     "started",
+    "Ended":                       "ended",
+    "Points":                      "points",
+    "Start location longitude":    "start_lon",
+    "Start location latitude":     "start_lat",
+    "End location longitude":      "end_lon",
+    "End location latitude":       "end_lat",
+    "Avg distance between points": "avg_point_distance"
+}
