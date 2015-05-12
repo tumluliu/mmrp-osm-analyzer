@@ -1,35 +1,49 @@
-# Reduce the GPX summary into well-structured CSV files
+# Reduce the GPX summary into a well-structured CSV file
+# Created by Lu Liu
+# 2015-05-09
 
 from os import listdir
 from os.path import isfile, join, splitext
 from collections import OrderedDict
 import json
 import re
+import argparse
 
-with open("reducer_conf.json") as colname_file:
+parser = argparse.ArgumentParser()
+parser.add_argument("-c", "--config", default="reducer_conf.json",
+                    help="JSON format config file for GPX summary reducer")
+parser.add_argument("GPX_SUMMARY_DIR",
+                    help="Directory where GPX summary files are stored")
+args = parser.parse_args()
+CONFIG_FILE = args.config
+GPX_SUMMARY_DIR = args.GPX_SUMMARY_DIR
+
+with open(CONFIG_FILE) as colname_file:
     colnames = json.load(colname_file, object_pairs_hook=OrderedDict)
 
-gpx_summary_dir = "/Users/user/Research/data/GPX/Munich/summary"
-gpx_sum_files = [f for f in listdir(gpx_summary_dir) if isfile(join(gpx_summary_dir, f))]
+gpx_sum_files = [f for f in listdir(GPX_SUMMARY_DIR) if isfile(join(GPX_SUMMARY_DIR, f))]
 # There are normally 12 lines of summary info for each Track Segment
 track_info_lines = 16
 track_info = OrderedDict()
 na_string_list = ["n/a", "None", "none", "N/A", "NA"]
 
 for gpx_sum_file in gpx_sum_files:
-    f = open(join(gpx_summary_dir, gpx_sum_file))
+    f = open(join(GPX_SUMMARY_DIR, gpx_sum_file))
     file_name, extension = splitext(gpx_sum_file)
+    # summary file name is like this:
+    # tracks_munich_page_88_with_elevations.gpx.summary
+    page_no = file_name.split('.')[0].split('_')[3]
     condensed_gpx_sum_file = file_name + ".csv"
-    csv_f = open(join(gpx_summary_dir, "csv", condensed_gpx_sum_file), 'w')
+    csv_f = open(join(GPX_SUMMARY_DIR, "csv", condensed_gpx_sum_file), 'w')
     # write header line to CSV
-    csv_f.write(str(",".join(colnames.values())) + "\n")
+    csv_f.write("page_no," + str(",".join(colnames.values())) + "\n")
     print "Reducing GPX summary file " + gpx_sum_file + \
         " to CSV file " + file_name + ".csv ...",
     #print str(",".join(colnames.values()))
     track_cursor = 0
     is_track_recorder_on = False
     for line in f.readlines():
-        print line
+        #print line
         if re.match(r".*Track.*Segment.*", line):
             #print "processing " + line.strip() + " ..."
             # start assembling a CSV row for each track segment
@@ -103,7 +117,8 @@ for gpx_sum_file in gpx_sum_files:
         if (is_track_recorder_on) and (track_cursor == track_info_lines + 1):
             #print " A track segment has been processed!"
             #print str(",".join(track_info.values()))
-            csv_f.write(str(",".join(track_info.values())) + "\n")
+            csv_f.write(str(page_no) + "," + \
+                        str(",".join(track_info.values())) + "\n")
             #print track_info.values()
             is_track_recorder_on = False
             track_cursor = 0
