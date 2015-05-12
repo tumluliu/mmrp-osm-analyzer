@@ -1,7 +1,8 @@
 #!/bin/bash
 # Add elevations to GPX data from SRTM
 
-gpx_dir=/Users/user/Research/data/GPX/Munich
+#gpx_dir=/Users/user/Research/data/GPX/Munich
+gpx_dir=$1
 
 for gpx_file in "$gpx_dir"/*.gpx
 do
