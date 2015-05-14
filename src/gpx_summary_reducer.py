@@ -94,7 +94,6 @@ for gpx_sum_file in gpx_sum_files:
                     track_info[key] = "NA"
                 else:
                     track_info[key] = line.strip().split(':', 1)[1][1:]
-                track_info[key] = line.strip().split(':', 1)[1][1:]
                 track_cursor += 1
             if re.match(r".*Points.*", line):
                 track_info[key] = line.strip().split(':')[1][1:]
