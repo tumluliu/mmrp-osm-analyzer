@@ -22,7 +22,7 @@ CREATE TABLE trackseginfo(
     avg_point_distance double precision
 );
 
-\COPY trackseginfo FROM '../data/munich_track_segment_info.csv' WITH CSV HEADER;
+\COPY trackseginfo FROM '../data/munich_gpx_info.csv' WITH CSV HEADER;
 
 SELECT AddGeometryColumn('public', 'trackseginfo', 'start_geom', 4326, 'POINT', 2);
 
@@ -60,7 +60,7 @@ CREATE TABLE trackinfo(
     avg_point_distance double precision
 );
 
-\COPY trackinfo FROM '../data/munich_track_info.csv' WITH CSV HEADER;
+\COPY trackinfo (end_lon,length_3d,downhill,start_lon,started,avg_point_distance,segments,moving_time,track_id,uphill,ended,max_speed,end_lat,start_lat,length_2d,stopped_time,page_no,points) FROM '../data/munich_track_info.csv' WITH CSV HEADER;
 
 SELECT AddGeometryColumn('public', 'trackinfo', 'start_geom', 4326, 'POINT', 2);
 
