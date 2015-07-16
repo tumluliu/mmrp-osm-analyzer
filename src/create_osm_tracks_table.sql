@@ -2,23 +2,23 @@
 DROP TABLE IF EXISTS trackseginfo;
 
 CREATE TABLE trackseginfo(
-    page_no integer,
-    track_id integer,
-    segment_id integer,
-    length_2d double precision,
-    length_3d double precision,
-    moving_time interval,
-    stopped_time interval,
-    max_speed double precision,
-    uphill double precision,
-    downhill double precision,
-    started timestamp,
-    ended timestamp,
-    points integer,
-    start_lon double precision,
-    start_lat double precision,
-    end_lon double precision,
-    end_lat double precision,
+    page_no            integer,
+    track_id           integer,
+    segment_id         integer,
+    length_2d          double precision,
+    length_3d          double precision,
+    moving_time        interval,
+    stopped_time       interval,
+    max_speed          double precision,
+    uphill             double precision,
+    downhill           double precision,
+    started            timestamp,
+    ended              timestamp,
+    points             integer,
+    start_lon          double precision,
+    start_lat          double precision,
+    end_lon            double precision,
+    end_lat            double precision,
     avg_point_distance double precision
 );
 
@@ -40,23 +40,23 @@ CREATE INDEX trackseginfo_end_geom ON trackseginfo USING GIST (end_geom);
 DROP TABLE IF EXISTS trackinfo;
 
 CREATE TABLE trackinfo(
-    page_no integer,
-    track_id integer,
-    segments integer,
-    length_2d double precision,
-    length_3d double precision,
-    moving_time interval,
-    stopped_time interval,
-    max_speed double precision,
-    uphill double precision,
-    downhill double precision,
-    started timestamp,
-    ended timestamp,
-    points integer,
-    start_lon double precision,
-    start_lat double precision,
-    end_lon double precision,
-    end_lat double precision,
+    page_no            integer,
+    track_id           integer,
+    segments           integer,
+    length_2d          double precision,
+    length_3d          double precision,
+    moving_time        interval,
+    stopped_time       interval,
+    max_speed          double precision,
+    uphill             double precision,
+    downhill           double precision,
+    started            timestamp,
+    ended              timestamp,
+    points             integer,
+    start_lon          double precision,
+    start_lat          double precision,
+    end_lon            double precision,
+    end_lat            double precision,
     avg_point_distance double precision
 );
 
@@ -73,3 +73,10 @@ UPDATE trackinfo SET end_geom = ST_SetSRID(ST_MakePoint(end_lon, end_lat), 4326)
 CREATE INDEX trackinfo_start_geom ON trackinfo USING GIST (start_geom);
 
 CREATE INDEX trackinfo_end_geom ON trackinfo USING GIST (end_geom);
+
+ALTER TABLE "trackinfo" ADD COLUMN "ogc_fid" INTEGER;
+UPDATE trackinfo SET ogc_fid = tracks.ogc_fid FROM tracks WHERE trackinfo.page_no = tracks.page_no AND trackinfo.track_id = tracks.track_id;
+ALTER TABLE "trackinfo"
+  ALTER COLUMN "ogc_fid" SET NOT NULL;
+ALTER TABLE "trackinfo" ADD UNIQUE ("ogc_fid");
+ALTER TABLE "trackinfo" ADD PRIMARY KEY ("ogc_fid");
