@@ -3,12 +3,8 @@
 # Created by Lu Liu
 # 2015-07-15
 
-from os import listdir
-from os.path import isfile, join, splitext
 from itertools import groupby
 from datetime import datetime, timedelta
-import json
-import re
 import argparse
 import csv
 import operator
