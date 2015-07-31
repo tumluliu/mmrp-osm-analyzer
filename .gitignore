@@ -1,3 +1,7 @@
 *.un~
 *.swp
-.ropeproject
+.ropeproject/
+.idea/
+profile-templates/
+tmp/
+config.json
