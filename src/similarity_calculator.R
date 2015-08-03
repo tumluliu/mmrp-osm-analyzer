@@ -23,7 +23,9 @@ CalculateSimilarity <- function(track.coords, path.coords, FUN=SimilarityMeasure
                                                        track=track.coords[sapply(track.coords, function(t) t[["fid"]]==p[["fid"]])] 
                                                        ))
     track.path <- track.path[sapply(track.path, function(tp) length(tp[["track"]]) > 0)]
-    return(lapply(track.path, function(tp) FUN(tp[["path"]], tp[["track"]][[1]][["coords"]], ...)))
+    return(lapply(track.path, function(tp) list(fileid=tp[["fileid"]], 
+                                                fid=tp[["fid"]], 
+                                                dist=FUN(tp[["path"]], tp[["track"]][[1]][["coords"]], ...))))
 }
 
 track.filenames <- list.files("data/sample_tracks", pattern="*.geojson", full.names=TRUE)
@@ -37,4 +39,4 @@ ll1 <- lapply(ll0, function(y) list(y[[1]], y[[2]], lapply(y[[3]], function(z) z
 path.coords <- lapply(ll1, function(p) list(fileid=p[[1]], fid=p[[2]], coords=do.call(rbind, p[[3]])))
 dtw <- CalculateSimilarity(track.coords, path.coords, FUN=SimilarityMeasures::DTW)
 editdist <- CalculateSimilarity(track.coords, path.coords, FUN=SimilarityMeasures::EditDist, pointDistance=0.001)
-frechet <- CalculateSimilarity(track.coords, path.coords, FUN=SimilarityMeasures::Frechet)
+#frechet <- CalculateSimilarity(track.coords, path.coords, FUN=SimilarityMeasures::Frechet)
