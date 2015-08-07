@@ -81,7 +81,7 @@ tl1 <-
         list(y[[1]], lapply(y[[2]], function(z)
             z@coords)))
 track.coords <-
-    lapply(d1, function(t)
+    lapply(tl1, function(t)
         list(fid = t[[1]], coords = do.call(rbind, t[[2]])))
 track.coords.reproj <-
     lapply(track.coords, function(t)
@@ -128,54 +128,66 @@ track.path <-
         length(tp[["track"]]) > 0)]
 # DTW
 print("Calculating DTW distance...")
+start.time <- Sys.time()
 dtw <- lapply(track.path, function(tp)
     CalculateDTW(tp[["fileid"]],
                  tp[["fid"]],
                  tp[["path"]],
                  tp[["track"]][[1]][["coords"]]))
+end.time <- Sys.time()
+time.taken <- end.time - start.time
 print("done!")
+print(time.taken)
 dtw.df <- do.call(rbind, dtw)
 print("Writing DTW data to CSV file...")
 write.csv(dtw.df, file = "data/dtw.csv", row.names = FALSE)
 print("done!")
 # EditDist
 print("Calculating EditDist distance...")
+start.time <- Sys.time()
 editdist <- lapply(track.path,
-                   function(tp)
-                       CalculateEditDist(tp[["fileid"]],
-                                         tp[["fid"]],
-                                         tp[["path"]],
-                                         tp[["track"]][[1]][["coords"]],
-                                         pointDistance = 100))
+                               function(tp)
+                                   CalculateEditDist(tp[["fileid"]],
+                                                     tp[["fid"]],
+                                                     tp[["path"]],
+                                                     tp[["track"]][[1]][["coords"]],
+                                                     pointDistance = 100))
+end.time <- Sys.time()
+time.taken <- end.time - start.time
 print("done!")
+print(time.taken)
 editdist.df <- do.call(rbind, editdist)
 print("Writing EditDist data to CSV file...")
 write.csv(editdist.df, file = "data/editdist.csv", row.names = FALSE)
 print("done!")
 # LCSS
 print("Calculating LCSS distance...")
+start.time <- Sys.time()
 lcss <- lapply(track.path,
-               function(tp)
-                   CalculateLCSS(tp[["fileid"]],
-                                 tp[["fid"]],
-                                 tp[["path"]],
-                                 tp[["track"]][[1]][["coords"]],
-                                 pointDistance = 100))
+                           function(tp)
+                               CalculateLCSS(tp[["fileid"]],
+                                             tp[["fid"]],
+                                             tp[["path"]],
+                                             tp[["track"]][[1]][["coords"]],
+                                             pointDistance = 100))
+end.time <- Sys.time()
+time.taken <- end.time - start.time
 print("done!")
+print(time.taken)
 lcss.df <- do.call(rbind, lcss)
 print("Writing LCSS data to CSV file...")
 write.csv(lcss.df, file = "data/lcss.csv", row.names = FALSE)
 print("done!")
 # Frechet
-print("Calculating Frechet distance...")
-frechet <- lapply(track.path,
-                  function(tp)
-                      CalculateFrechet(tp[["fileid"]],
-                                       tp[["fid"]],
-                                       tp[["path"]],
-                                       tp[["track"]][[1]][["coords"]]))
-print("done!")
-frechet.df <- do.call(rbind, frechet)
-print("Writing Frechet data to CSV file...")
-write.csv(frechet.df, file = "data/frechet.csv", row.names = FALSE)
-print("done!")
+# print("Calculating Frechet distance...")
+# frechet <- lapply(track.path,
+#                   function(tp)
+#                       CalculateFrechet(tp[["fileid"]],
+#                                        tp[["fid"]],
+#                                        tp[["path"]],
+#                                        tp[["track"]][[1]][["coords"]]))
+# print("done!")
+# frechet.df <- do.call(rbind, frechet)
+# print("Writing Frechet data to CSV file...")
+# write.csv(frechet.df, file = "data/frechet.csv", row.names = FALSE)
+# print("done!")
