@@ -50,6 +50,23 @@ CalculateEditDist <-
         ))
     }
 
+CalculateLCSS <-
+    function(fileid, fid, path, track, ...) {
+        d <- SimilarityMeasures::LCSSCalc(path, track, ...)
+        r <- SimilarityMeasures::LCSSRatioCalc(path, track, ...)
+        return(list(
+            fileid = fileid, fid = fid, dist = d, ratio = r
+        ))
+    }
+
+CalculateFrechet <-
+    function(fileid, fid, path, track) {
+        d <- SimilarityMeasures::Frechet(path, track)
+        return(list(
+            fileid = fileid, fid = fid, dist = d
+        ))
+    }
+
 # EPSG:25832
 munich.srs <-
     "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs"
@@ -95,19 +112,21 @@ path.coords.reproj <-
             coords = project(p[["coords"]],
                              munich.srs)
         ))
-track.path <- lapply(path.coords.reproj,
-                     function(p)
-                         list(
-                             fileid = p[["fileid"]],
-                             fid = p[["fid"]],
-                             path = p[["coords"]],
-                             track = track.coords.reproj[sapply(track.coords.reproj,
-                                                                function(t)
-                                                                    t[["fid"]] == p[["fid"]])]
-                         ))
+track.path <-
+    lapply(path.coords.reproj,
+           function(p)
+               list(
+                   fileid = p[["fileid"]],
+                   fid = p[["fid"]],
+                   path = p[["coords"]],
+                   track = track.coords.reproj[sapply(track.coords.reproj,
+                                                      function(t)
+                                                          t[["fid"]] == p[["fid"]])]
+               ))
 track.path <-
     track.path[sapply(track.path, function(tp)
         length(tp[["track"]]) > 0)]
+# DTW
 print("Calculating DTW distance...")
 dtw <- lapply(track.path, function(tp)
     CalculateDTW(tp[["fileid"]],
@@ -119,6 +138,7 @@ dtw.df <- do.call(rbind, dtw)
 print("Writing DTW data to CSV file...")
 write.csv(dtw.df, file = "data/dtw.csv", row.names = FALSE)
 print("done!")
+# EditDist
 print("Calculating EditDist distance...")
 editdist <- lapply(track.path,
                    function(tp)
@@ -126,10 +146,36 @@ editdist <- lapply(track.path,
                                          tp[["fid"]],
                                          tp[["path"]],
                                          tp[["track"]][[1]][["coords"]],
-                                         pointDistance = 50))
+                                         pointDistance = 100))
 print("done!")
 editdist.df <- do.call(rbind, editdist)
 print("Writing EditDist data to CSV file...")
 write.csv(editdist.df, file = "data/editdist.csv", row.names = FALSE)
 print("done!")
-#frechet <- CalculateSimilarity(track.coords, path.coords, FUN=SimilarityMeasures::Frechet)
+# LCSS
+print("Calculating LCSS distance...")
+lcss <- lapply(track.path,
+               function(tp)
+                   CalculateLCSS(tp[["fileid"]],
+                                 tp[["fid"]],
+                                 tp[["path"]],
+                                 tp[["track"]][[1]][["coords"]],
+                                 pointDistance = 100))
+print("done!")
+lcss.df <- do.call(rbind, lcss)
+print("Writing LCSS data to CSV file...")
+write.csv(lcss.df, file = "data/lcss.csv", row.names = FALSE)
+print("done!")
+# Frechet
+print("Calculating Frechet distance...")
+frechet <- lapply(track.path,
+                  function(tp)
+                      CalculateFrechet(tp[["fileid"]],
+                                       tp[["fid"]],
+                                       tp[["path"]],
+                                       tp[["track"]][[1]][["coords"]]))
+print("done!")
+frechet.df <- do.call(rbind, frechet)
+print("Writing Frechet data to CSV file...")
+write.csv(frechet.df, file = "data/frechet.csv", row.names = FALSE)
+print("done!")
