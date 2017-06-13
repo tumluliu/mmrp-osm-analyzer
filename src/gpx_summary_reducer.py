@@ -32,11 +32,11 @@ for gpx_sum_file in gpx_sum_files:
     file_name, extension = splitext(gpx_sum_file)
     # summary file name is like this:
     # tracks_munich_page_88_with_elevations.gpx.summary
-    page_no = file_name.split('.')[0].split('_')[3]
+    gpx_id = file_name.split('.')[0].split('_')[0]
     condensed_gpx_sum_file = file_name + ".csv"
     csv_f = open(join(GPX_SUMMARY_DIR, "csv", condensed_gpx_sum_file), 'w')
     # write header line to CSV
-    csv_f.write("page_no," + str(",".join(colnames.values())) + "\n")
+    csv_f.write("gpx_id," + str(",".join(colnames.values())) + "\n")
     print "Reducing GPX summary file " + gpx_sum_file + \
         " to CSV file " + file_name + ".csv ...",
     #print str(",".join(colnames.values()))
@@ -116,7 +116,7 @@ for gpx_sum_file in gpx_sum_files:
         if (is_track_recorder_on) and (track_cursor == track_seg_info_lines + 1):
             #print " A track segment has been processed!"
             #print str(",".join(track_seg_info.values()))
-            csv_f.write(str(page_no) + "," + \
+            csv_f.write(str(gpx_id) + "," + \
                         str(",".join(track_seg_info.values())) + "\n")
             #print track_seg_info.values()
             is_track_recorder_on = False

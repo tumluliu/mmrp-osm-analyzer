@@ -19,8 +19,8 @@ TRACK_SEG_FILE = args.tracksegfile
 TRACK_FILE = args.trackfile
 
 def _get_timedelta(timespanstr):
-    if not timespanstr:
-        # empty string
+    if (not timespanstr) or (timespanstr == 'NA'):
+        # empty string or 'NA'
         return ''
     unzipped_timespan = timespanstr.split(':')
     return timedelta(hours=int(unzipped_timespan[0]),
@@ -28,12 +28,12 @@ def _get_timedelta(timespanstr):
                      seconds=int(unzipped_timespan[2]))
 
 def _get_datetime(timestr):
-    if not timestr:
+    if (not timestr) or (timestr == 'NA'):
         return ''
     return datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
 
 def _normalize(r):
-    r['page_no'] = int(r['page_no'])
+    r['gpx_id'] = int(r['gpx_id'])
     r['track_id'] = int(r['track_id'])
     r['segment_id'] = int(r['segment_id'])
     return r
@@ -47,13 +47,13 @@ with open(TRACK_SEG_FILE) as track_seg_file:
 print 'There are ' + str(len(track_segs)) + ' track segments'
 track_segs.sort(key=operator.itemgetter('segment_id'))
 track_segs.sort(key=operator.itemgetter('track_id'))
-track_segs.sort(key=operator.itemgetter('page_no'))
+track_segs.sort(key=operator.itemgetter('gpx_id'))
 #print 'First lines of track_segs: '
 #for t in track_segs[0:15]:
-    #print 'page_no: ' + str(t['page_no']) + 'track_id: ' + str(t['track_id']) + 'seg_id: ' + str(t['segment_id'])
+    #print 'gpx_id' + str(t['gpx_id']) + 'track_id: ' + str(t['track_id']) + 'seg_id: ' + str(t['segment_id'])
 grouped_seg_info = []
 page_track_key = []
-for k, g in groupby(track_segs, lambda seg: str(seg['page_no']) + str(seg['track_id'])):
+for k, g in groupby(track_segs, lambda seg: str(seg['gpx_id']) + str(seg['track_id'])):
     grouped_seg_info.append(list(g))
     page_track_key.append(k)
 
@@ -61,10 +61,10 @@ track_info_list = []
 print 'There are ' + str(len(grouped_seg_info)) + ' tracks aggregated from segemnts'
 #print 'First lines of grouped_seg_info: '
 #for t in grouped_seg_info[0:15]:
-    #print 'page_no: ' + str(t[0]['page_no']) + 'track_id: ' + str(t[0]['track_id']) + 'seg_id: ' + str(t[0]['segment_id'])
+    #print 'gpx_id' + str(t[0]['gpx_id']) + 'track_id: ' + str(t[0]['track_id']) + 'seg_id: ' + str(t[0]['segment_id'])
 for tr in grouped_seg_info:
     track_info = {}
-    track_info['page_no'] = tr[0]['page_no']
+    track_info['gpx_id'] = tr[0]['gpx_id']
     track_info['track_id'] = tr[0]['track_id']
     track_info['segments'] = len(tr)
     track_info['length_2d'] = sum([float(seg['length_2d']) for seg in tr])
