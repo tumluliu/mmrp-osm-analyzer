@@ -11,5 +11,5 @@ do
     echo "done! "
 done
 mkdir -p "$gpx_dir"/gpx_with_elevations
-mv "$gpx_dir"/*_with_elevations.gpx "$gpx_dir"/gpx_with_elevations
+find $gpx_dir -name "*_with_elevations.gpx" -exec mv {} "$gpx_dir"/gpx_with_elevations \;
 

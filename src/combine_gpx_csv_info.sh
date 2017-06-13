@@ -4,7 +4,7 @@ CSV_DIR=$1
 DEST_CSV_FILE=$2
 FILE_INDEX=1
 
-FILE_COUNT=$(ls -l $CSV_DIR/*.csv | grep -v ^l | wc -l)
+FILE_COUNT=$(find $CSV_DIR -name "*.csv" |  wc -l)
 echo "Concatenating CSV files... "
 for csv_f in "$CSV_DIR"/*.csv
 do

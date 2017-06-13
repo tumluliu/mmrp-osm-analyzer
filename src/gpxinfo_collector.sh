@@ -10,5 +10,5 @@ do
     gpxinfo "$gpx_file" > "$gpx_file.summary"
     echo " done!"
 done
-mkdir -p "$gpx_dir"/summary
+mkdir -p "$gpx_dir"/summary/csv
 mv "$gpx_dir"/gpx_with_elevations/*.summary "$gpx_dir"/summary
